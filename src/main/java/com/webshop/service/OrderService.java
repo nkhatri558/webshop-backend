@@ -1,5 +1,6 @@
 package com.webshop.service;
 
+import com.webshop.model.CartItem;
 import com.webshop.model.Order;
 import com.webshop.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,9 @@ public class OrderService {
     }
 
     public Order saveOrder(Order order) {
+        for (CartItem item : order.getItems()) {
+            item.setOrder(order);
+        }
         return orderRepository.save(order);
     }
 
