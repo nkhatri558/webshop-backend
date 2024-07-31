@@ -6,7 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,9 +30,24 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> saveProduct(@RequestBody Product product) {
-        Product savedProduct = productService.saveProduct(product);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedProduct);
+    public Product createProduct(@RequestParam("name") String name,
+                                 @RequestParam("description") String description,
+                                 @RequestParam("category") String category,
+                                 @RequestParam("price") double price,
+                                 @RequestParam("stock") int stock,
+                                 @RequestParam("image") MultipartFile image) throws IOException {
+        return productService.createProduct(name, description, category, price, stock, image);
+    }
+
+    @PutMapping("/{id}")
+    public Product updateProduct(@PathVariable Long id,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("description") String description,
+                                 @RequestParam("category") String category,
+                                 @RequestParam("price") double price,
+                                 @RequestParam("stock") int stock,
+                                 @RequestParam("image") MultipartFile image) throws IOException {
+        return productService.updateProduct(id, name, description, category, price, stock, image);
     }
 
     @DeleteMapping("/{id}")
