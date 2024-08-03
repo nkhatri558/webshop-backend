@@ -2,8 +2,8 @@ package com.webshop.controller;
 
 import com.webshop.model.Product;
 import com.webshop.service.ProductService;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -46,7 +46,7 @@ public class ProductController {
                                  @RequestParam("category") String category,
                                  @RequestParam("price") double price,
                                  @RequestParam("stock") int stock,
-                                 @RequestParam("image") MultipartFile image) throws IOException {
+                                 @RequestParam("image") MultipartFile image) throws IOException, ResourceNotFoundException {
         return productService.updateProduct(id, name, description, category, price, stock, image);
     }
 

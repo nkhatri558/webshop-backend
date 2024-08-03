@@ -2,19 +2,28 @@ package com.webshop.service;
 
 import com.webshop.model.Product;
 import com.webshop.repository.ProductRepository;
+import org.codehaus.plexus.resource.loader.ResourceNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Value("${product.image.directory}")
+    private String imageDirectory;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -29,27 +38,33 @@ public class ProductService {
     }
 
     public Product createProduct(String name, String description, String category, double price, int stock, MultipartFile image) throws IOException {
-        Product product = new Product();
-        product.setName(name);
-        product.setDescription(description);
-        product.setCategory(category);
-        product.setPrice(price);
-        product.setStock(stock);
-        product.setImage(image.getBytes());
+        String imageUrl = saveImage(image);
+        Product product = new Product(null, name, description, category, price, stock, imageUrl);
         return productRepository.save(product);
     }
 
-    public Product updateProduct(Long id, String name, String description, String category, double price, int stock, MultipartFile image) throws IOException {
-        Product product = productRepository.findById(id).orElseThrow(() -> new RuntimeException("Product not found"));
+    public Product updateProduct(Long id, String name, String description, String category, double price, int stock, MultipartFile image) throws IOException, ResourceNotFoundException {
+        Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
         product.setName(name);
         product.setDescription(description);
         product.setCategory(category);
         product.setPrice(price);
         product.setStock(stock);
+
         if (image != null && !image.isEmpty()) {
-            product.setImage(image.getBytes());
+            String imageUrl = saveImage(image);
+            product.setImage(imageUrl);
         }
+
         return productRepository.save(product);
+    }
+
+    private String saveImage(MultipartFile image) throws IOException {
+        String filename = UUID.randomUUID().toString() + "-" + image.getOriginalFilename();
+        Path imagePath = Paths.get(imageDirectory, filename);
+        Files.createDirectories(imagePath.getParent());
+        Files.write(imagePath, image.getBytes());
+        return "/images/" + filename;
     }
 
     public Product updateStock(Long id, int stock) {
