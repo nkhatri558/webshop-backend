@@ -14,6 +14,9 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public List<Order> getAllOrders() {
         return orderRepository.findAll();
     }
@@ -25,6 +28,20 @@ public class OrderService {
     public Order saveOrder(Order order) {
         for (CartItem item : order.getItems()) {
             item.setOrder(order);
+        }
+        Order newOrder = orderRepository.save(order);
+        emailService.sendOrderConfirmation(order.getCustomer().getEmail());
+        return newOrder;
+    }
+
+    public Order updateOrder(Long id, Order orderDetails) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new RuntimeException("Order not found"));
+        order.setStatus(orderDetails.getStatus());
+        for (CartItem item : order.getItems()) {
+            item.setOrder(order);
+        }
+        if ("Shipped".equalsIgnoreCase(orderDetails.getStatus())) {
+            emailService.sendShippingNotification(order.getCustomer().getEmail());
         }
         return orderRepository.save(order);
     }
