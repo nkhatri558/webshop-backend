@@ -21,6 +21,12 @@ public class CustomerService {
         return customerRepository.findById(id);
     }
 
+    public Customer getCustomerByEmail(String email) {
+        Customer customer = customerRepository.findByEmail(email);
+        customer.setOrders(null);
+        return customer;
+    }
+
     public Customer saveCustomer(Customer customer) {
         return customerRepository.save(customer);
     }

@@ -16,8 +16,8 @@ public class ProductService {
 
     @Autowired
     private ProductRepository productRepository;
-    @Autowired
-    private S3Service s3Service;
+//    @Autowired
+//    private S3Service s3Service;
 
     public List<Product> getAllProducts() {
         return productRepository.findAll();
@@ -54,7 +54,8 @@ public class ProductService {
     }
 
     private String saveImage(MultipartFile image) throws IOException {
-        return s3Service.uploadFile(image);
+        return "";
+        //return s3Service.uploadFile(image);
     }
 
     public Product updateStock(Long id, int stock) {

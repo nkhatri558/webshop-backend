@@ -1,5 +1,6 @@
 package com.webshop.controller;
 
+import com.webshop.dto.OrderDTO;
 import com.webshop.model.Order;
 import com.webshop.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping
-    public List<Order> getAllOrders() {
+    public List<OrderDTO> getAllOrders() {
         return orderService.getAllOrders();
     }
 
@@ -45,4 +46,11 @@ public class OrderController {
         orderService.deleteOrder(id);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/customer")
+    public List<OrderDTO> getCustomerOrders(@RequestParam String email) {
+        return orderService.getOrdersByCustomerEmail(email);
+    }
+
+
 }

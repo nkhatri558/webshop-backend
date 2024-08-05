@@ -33,6 +33,11 @@ public class CustomerController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedCustomer);
     }
 
+    @PostMapping("/email/{email}")
+    public ResponseEntity<Customer> getCustomerByEmail(@PathVariable String email) {
+        return ResponseEntity.ok(customerService.getCustomerByEmail(email));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCustomer(@PathVariable Long id) {
         customerService.deleteCustomer(id);
