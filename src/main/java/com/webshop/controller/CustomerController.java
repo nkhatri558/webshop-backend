@@ -1,5 +1,6 @@
 package com.webshop.controller;
 
+import com.webshop.dto.CustomerDTO;
 import com.webshop.model.Customer;
 import com.webshop.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,8 @@ public class CustomerController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomerById(@PathVariable Long id) {
-        Optional<Customer> customer = customerService.getCustomerById(id);
+    public ResponseEntity<CustomerDTO> getCustomerById(@PathVariable Long id) {
+        Optional<CustomerDTO> customer = customerService.getCustomerById(id);
         return customer.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
