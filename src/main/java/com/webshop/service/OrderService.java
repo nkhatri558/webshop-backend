@@ -56,7 +56,7 @@ public class OrderService {
             newOrder = orderRepository.save(order);
         }
 
-        emailService.sendOrderConfirmation(newOrder.getCustomer().getEmail());
+        emailService.sendOrderPlacement(newOrder.getCustomer().getEmail());
         return newOrder;
     }
 
@@ -68,6 +68,8 @@ public class OrderService {
         }
         if ("Shipped".equalsIgnoreCase(orderDetails.getStatus())) {
             emailService.sendShippingNotification(order.getCustomer().getEmail());
+        } else if ("Confirmed".equalsIgnoreCase(orderDetails.getStatus())) {
+            emailService.sendOrderConfirmation(orderDetails.getStatus());
         }
         Order savedOrder = orderRepository.save(order);
         for (CartItem cartItem: savedOrder.getItems()) {

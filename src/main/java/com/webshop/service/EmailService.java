@@ -19,11 +19,15 @@ public class EmailService {
         mailSender.send(message);
     }
 
-    public void sendOrderConfirmation(String to) {
-        sendEmail(to, "Order Confirmation", "Your order has been placed successfully.");
+    public void sendOrderPlacement(String to) {
+        sendEmail(to, "Order Placed", "Your order has been placed successfully.");
     }
 
     public void sendShippingNotification(String to) {
         sendEmail(to, "Shipping Notification", "Your order has been shipped.");
+    }
+
+    public void sendOrderConfirmation(String to) {
+        sendEmail(to, "Order Confirmation", "Your order has been confirmed.");
     }
 }
