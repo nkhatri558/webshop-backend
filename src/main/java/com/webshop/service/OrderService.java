@@ -3,10 +3,11 @@ package com.webshop.service;
 import com.webshop.dto.CartItemDTO;
 import com.webshop.dto.CustomerDTO;
 import com.webshop.dto.OrderDTO;
-import com.webshop.dto.ProductDTO;
 import com.webshop.model.CartItem;
+import com.webshop.model.Customer;
 import com.webshop.model.Order;
 import com.webshop.model.Product;
+import com.webshop.repository.CustomerRepository;
 import com.webshop.repository.OrderRepository;
 import com.webshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class OrderService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private CustomerRepository customerRepository;
+
     public List<OrderDTO> getAllOrders() {
         List<Order> orders = orderRepository.findAll();
         return orders.stream().map(this::convertToDTO).collect(Collectors.toList());
@@ -40,8 +44,19 @@ public class OrderService {
         for (CartItem item : order.getItems()) {
             item.setOrder(order);
         }
-        Order newOrder = orderRepository.save(order);
-        emailService.sendOrderConfirmation(order.getCustomer().getEmail());
+        Customer customer = customerRepository.findByEmail(order.getCustomer().getEmail());
+        Order newOrder;
+        if (customer != null) {
+            order.setCustomer(null);
+            newOrder = orderRepository.save(order);
+            newOrder.setCustomer(customer);
+            newOrder = orderRepository.save(newOrder);
+        }
+        else {
+            newOrder = orderRepository.save(order);
+        }
+
+        emailService.sendOrderConfirmation(newOrder.getCustomer().getEmail());
         return newOrder;
     }
 
